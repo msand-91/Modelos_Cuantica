@@ -1,0 +1,5 @@
+# Configuracion de despliegue en Netlify.
+# Netlify ejecuta el build y publica la carpeta dist/ en cada push a GitHub.
+[build]
+  command = "npm run build"
+  publish = "dist"

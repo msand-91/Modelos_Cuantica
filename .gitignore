@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Libro de estudio (con derechos, no se publica)
+*.pdf

@@ -1,0 +1,105 @@
+:root {
+  --bg: #0a0e17;
+  --panel: rgba(16, 22, 36, 0.82);
+  --fg: #e8ecf4;
+  --accent: #5aa9ff;
+  --pos: #ff5a6e;
+  --neg: #4d8bff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#app { width: 100%; height: 100%; }
+
+canvas { display: block; }
+
+#titulo {
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+#titulo .t-main { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+#titulo .t-sub { font-size: 12px; opacity: 0.7; }
+
+#info {
+  position: fixed;
+  top: 64px;
+  left: 16px;
+  z-index: 10;
+  max-width: 320px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 1px solid rgba(90, 169, 255, 0.25);
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  backdrop-filter: blur(6px);
+}
+#info h3 { margin: 0 0 6px; font-size: 14px; color: var(--accent); }
+#info .val { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #ffd479; }
+#info .muted { opacity: 0.7; }
+#info .formula { font-size: 12px; line-height: 1.7; }
+#info .formula .frow {
+  display: inline-block;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: #cfe3ff;
+  margin-top: 2px;
+}
+
+#plots {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 492px;          /* caben 2 por fila -> rejilla 2x2 */
+  gap: 8px;
+}
+#plots canvas {
+  background: var(--panel);
+  border: 1px solid rgba(90, 169, 255, 0.25);
+  border-radius: 8px;
+}
+#plots .plot-wrap { position: relative; }
+#plots .plot-label {
+  position: absolute;
+  top: 3px;
+  left: 6px;
+  font-size: 11px;
+  opacity: 0.85;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Boton VR generado por three.js */
+button#VRButton {
+  background: var(--panel) !important;
+  border: 1px solid var(--accent) !important;
+  color: var(--fg) !important;
+  border-radius: 8px !important;
+}
+
+/* lil-gui ajustes de posicion */
+.lil-gui.root {
+  --background-color: var(--panel);
+  --width: 290px;
+  z-index: 11;
+}

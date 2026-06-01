@@ -1,0 +1,19 @@
+{
+  "name": "modelos-cuantica",
+  "version": "0.1.0",
+  "description": "Visualizador interactivo de modelos cuanticos (atomo de hidrogeno y particula en caja) para computador y gafas VR (Meta Quest) usando Three.js + WebXR.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lil-gui": "^0.19.2",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^1.1.0",
+    "vite": "^5.4.0"
+  }
+}
