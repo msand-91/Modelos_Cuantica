@@ -187,6 +187,11 @@ function rebuild() {
   updateInfo();
 }
 
+// En VR limitamos el nº de puntos/bucles (el Quest se traba con muchos sprites).
+function vrPointCount(n) {
+  return renderer.xr.isPresenting ? Math.min(n, 8000) : n;
+}
+
 // psi(escena) de un orbital dado {n,l,m}.
 function orbPsiScene(o) {
   const Zeff = effectiveZ();
@@ -230,7 +235,7 @@ function rebuildHydrogen() {
     if (state.showPoints) {
       // buildPointCloud usa v² como densidad; pasamos √densidad para recuperarla.
       const sq = (x, y, z) => Math.sqrt(Math.max(0, densFn(x, y, z)));
-      vizGroup.add(buildPointCloud(sq, state.pointCount, H, Math.sqrt(field.absMax), state.opacity, state.cloudForm, state.cloudColor));
+      vizGroup.add(buildPointCloud(sq, vrPointCount(state.pointCount), H, Math.sqrt(field.absMax), state.opacity, state.cloudForm, state.cloudColor));
     }
     return;
   }
@@ -269,7 +274,7 @@ function buildOrbitalViz(psiFn, H, pointCount = state.pointCount, target = vizGr
     }
   }
   if (state.showPoints)
-    target.add(buildPointCloud(psiFn, pointCount, H, field.absMax, state.opacity, state.cloudForm, state.cloudColor));
+    target.add(buildPointCloud(psiFn, vrPointCount(pointCount), H, field.absMax, state.opacity, state.cloudForm, state.cloudColor));
   if (state.showSlices)
     target.add(buildSlices(psiFn, H, field.absMax, slicePlanes(), 128));
   if (state.showNodes)
@@ -529,6 +534,15 @@ const vrActions = {
   scaleDown: () => scaleVR(1 / 1.25),
   scaleUp: () => scaleVR(1.25),
   recenter: () => fitInVR(),
+  cycleForm: () => {
+    state.cloudForm = state.cloudForm === 'lineas' ? 'puntos' : 'lineas';
+    if (!state.showPoints) state.showPoints = true; // la nube debe estar activa
+    rebuild();
+  },
+  cycleColor: () => {
+    state.cloudColor = state.cloudColor === 'violet' ? 'sign' : 'violet';
+    rebuild();
+  },
 };
 
 function vrStatus() {
@@ -539,6 +553,7 @@ function vrStatus() {
     energy: fmtEn(energyEV(state.n, sp.Z, muFactor())),
     iso: state.showIso, points: state.showPoints, slices: state.showSlices,
     probe: state.probeOn, isoLevel: state.isoLevel,
+    lineas: state.cloudForm === 'lineas',
   };
 }
 

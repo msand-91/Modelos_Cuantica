@@ -14,7 +14,7 @@ export class VRMenu {
     this.actions = actions;
     this.getStatus = getStatus;
     this.W = 512;
-    this.H = 604;
+    this.H = 676;
     this.hover = null;
 
     // Botones (rectangulos en pixeles del canvas).
@@ -32,6 +32,8 @@ export class VRMenu {
       { id: 'scaleDown', label: 'Tamaño −', x: 24, y: 504, w: 148, h: 62 },
       { id: 'scaleUp', label: 'Tamaño +', x: 182, y: 504, w: 148, h: 62 },
       { id: 'recenter', label: 'Recentrar', x: 340, y: 504, w: 148, h: 62 },
+      { id: 'cycleForm', label: 'Líneas', x: 24, y: 576, w: 230, h: 62, activeKey: 'lineas' },
+      { id: 'cycleColor', label: 'Color', x: 258, y: 576, w: 230, h: 62 },
     ];
 
     // Canvas + textura.
