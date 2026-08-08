@@ -5,8 +5,9 @@ dist/
 
 # Libro de estudio (con derechos, no se publica)
 *.pdf
-# ...pero la guia de la app si se publica
-!docs/guia.pdf
+# ...pero la guia de la app si se publica (en public/, que es lo que Vite
+# copia a la raiz del sitio)
+!public/guia.pdf
 
 # Datos intermedios de la guia: pesan mucho y se regeneran con
 #   node scripts/guia-datos.mjs

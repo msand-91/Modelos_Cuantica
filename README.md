@@ -103,11 +103,19 @@ Cada vez:
 
 ## Publicar (Netlify)
 
-[netlify.toml](netlify.toml) ya define el despliegue: Netlify ejecuta
-`npm run build` y publica `dist/` en cada push a GitHub. La URL pública
-(HTTPS válido, apta para VR por Wi-Fi) es <https://quimcuant.netlify.app/>.
-También puedes construir en local con `npm run build` y previsualizar el
-resultado con `npm run preview`.
+[netlify.toml](netlify.toml) define **cómo** se construye (`npm run build`,
+publicando `dist/`), pero para que el despliegue sea automático el sitio de
+Netlify tiene que estar **enlazado al repositorio**: en el panel, *Site
+configuration → Build & deploy → Repository → Link repository*. Mientras
+aparezca «Not linked», los push a GitHub **no** despliegan nada.
+
+Con el repositorio enlazado, cada push a `main` publica solo. Sin enlazar, la
+alternativa es arrastrar la carpeta `dist/` a la zona de *deploys* de Netlify.
+
+La URL pública (HTTPS válido, apta para VR por Wi-Fi) es
+<https://quimcuant.netlify.app/> y la guía queda en
+<https://quimcuant.netlify.app/guia.pdf>. En local, `npm run build` y
+`npm run preview`.
 
 ### Controles en VR
 - **Menú dentro de la VR**: al entrar aparece un panel flotante (el panel HTML no
@@ -301,8 +309,9 @@ scripts/
   guia-figuras.py      # figuras de la guía (matplotlib)
   guia-pdf.py          # monta docs/guia.pdf
   quest-vr-*.ps1       # puente de red / USB de Windows hacia WSL2 para el Quest
+public/
+  guia.pdf             # guía de funcionamiento y divulgación (se publica)
 docs/
-  guia.pdf             # guía de funcionamiento y divulgación
   figs/                # figuras generadas
 ```
 
@@ -345,7 +354,7 @@ node scripts/guia-datos.mjs          # energías, topología y cargas de todo el
 
 ## Guía en PDF
 
-[docs/guia.pdf](docs/guia.pdf) (37 páginas) está organizada en tres partes:
+[public/guia.pdf](public/guia.pdf) (37 páginas) está organizada en tres partes:
 
 1. **Manejar la aplicación** — cómo leer los colores y los marcadores de la
    escena, y **qué hace cada control**, modelo por modelo, con el nombre exacto
@@ -362,5 +371,5 @@ Todas las figuras y tablas las calcula el propio motor. Se regenera con:
 ```bash
 node scripts/guia-datos.mjs      # calcula todo (~1.5 min) → docs/guia-datos.json
 python3 scripts/guia-figuras.py  # figuras (matplotlib)   → docs/figs/
-python3 scripts/guia-pdf.py      # monta el documento     → docs/guia.pdf
+python3 scripts/guia-pdf.py      # monta el documento     → public/guia.pdf
 ```

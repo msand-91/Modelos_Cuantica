@@ -20,7 +20,9 @@ from reportlab.platypus import (BaseDocTemplate, Frame, Image, KeepTogether, Nex
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIG = os.path.join(ROOT, "docs", "figs")
 D = json.load(open(os.path.join(ROOT, "docs", "guia-datos.json")))
-PDF = os.path.join(ROOT, "docs", "guia.pdf")
+# En public/ porque Vite sirve esa carpeta en la raíz del sitio: así el
+# enlace /guia.pdf funciona en desarrollo y en el despliegue.
+PDF = os.path.join(ROOT, "public", "guia.pdf")
 
 # --- tipografia unicode -----------------------------------------------------
 # Las fuentes del sistema no traen la variante oblicua de DejaVu Sans; matplotlib
