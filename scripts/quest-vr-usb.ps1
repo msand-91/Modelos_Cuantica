@@ -4,6 +4,9 @@
 #
 #  Tunel:  Quest(localhost:5174) --USB--> PC(127.0.0.1:5174) --portproxy--> WSL
 #
+#  Vite sirve por HTTP simple; como el Quest abre http://localhost:5174/ (que el
+#  navegador considera "contexto seguro"), WebXR funciona sin certificados.
+#
 #  REQUISITOS (una sola vez):
 #    A) Modo Desarrollador activado en el Quest (app movil Meta Quest ->
 #       Dispositivos -> tu Quest -> Modo desarrollador -> ON).
@@ -46,7 +49,8 @@ adb reverse tcp:$port tcp:$port | Out-Null
 Write-Host ""
 Write-Host "=================================================================" -ForegroundColor Green
 Write-Host " adb reverse activo. En el navegador del Quest abre:" -ForegroundColor Green
-Write-Host "     https://localhost:$port/" -ForegroundColor Yellow
+Write-Host "     http://localhost:$port/" -ForegroundColor Yellow
+Write-Host " (localhost es 'contexto seguro': WebXR funciona sin HTTPS)" -ForegroundColor DarkGray
 Write-Host "=================================================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Reenvios inversos activos:"

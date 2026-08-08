@@ -34,6 +34,29 @@ export function buildPointCloud(psiFn, count, H, maxAbs, opacity = 0.9, form = '
   const POS = colorScheme === 'violet' ? [0.66, 0.55, 1.0] : [1.0, 0.353, 0.43];
   const NEG = colorScheme === 'violet' ? [0.40, 0.80, 1.0] : [0.302, 0.545, 1.0];
 
+  // Escala CONTINUA: en vez de dos colores planos por signo, un degradado que
+  // recorre el valor del campo. Se usa escala logaritmica con signo porque
+  // estos campos abarcan varios ordenes de magnitud y en lineal casi todos los
+  // puntos caerian en el mismo tono.
+  const continuo = colorScheme === 'continuo';
+  const v0 = Math.max(1e-6, maxAbs * 1e-3);
+  const kLog = Math.log1p(maxAbs / v0) || 1;
+  const rampa = (v, out) => {
+    const t = Math.sign(v) * Math.log1p(Math.abs(v) / v0) / kLog;   // −1 … +1
+    const a = Math.min(1, Math.abs(t));
+    if (t >= 0) {                     // gris pálido -> rojo intenso
+      out[0] = 0.86 + 0.14 * a;
+      out[1] = 0.86 - 0.51 * a;
+      out[2] = 0.86 - 0.43 * a;
+    } else {                          // gris pálido -> azul intenso
+      out[0] = 0.86 - 0.56 * a;
+      out[1] = 0.86 - 0.32 * a;
+      out[2] = 0.86 + 0.14 * a;
+    }
+    return out;
+  };
+  const tmpCol = [0, 0, 0];
+
   let accepted = 0;
   let attempts = 0;
   const maxAttempts = count * 400;
@@ -49,7 +72,7 @@ export function buildPointCloud(psiFn, count, H, maxAbs, opacity = 0.9, form = '
       positions[o] = x;
       positions[o + 1] = y;
       positions[o + 2] = z;
-      const c = v >= 0 ? POS : NEG;
+      const c = continuo ? rampa(v, tmpCol) : (v >= 0 ? POS : NEG);
       colors[o] = c[0];
       colors[o + 1] = c[1];
       colors[o + 2] = c[2];

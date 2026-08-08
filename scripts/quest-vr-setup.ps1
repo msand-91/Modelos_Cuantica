@@ -8,6 +8,11 @@
 #    1. Reenvia el puerto 5174 de Windows hacia el servidor Vite dentro de WSL2.
 #    2. Abre ese puerto en el Firewall de Windows (entrante, TCP).
 #
+#  Su uso principal hoy es el puente 127.0.0.1 que necesita el modo USB
+#  (quest-vr-usb.ps1). Por Wi-Fi la pagina se ve, pero WebXR exige "contexto
+#  seguro": con HTTP solo lo es localhost, asi que para VR por red hay que usar
+#  el despliegue HTTPS de Netlify.
+#
 #  La IP de WSL2 cambia al reiniciar; este script la detecta sola cada vez.
 #  Vuelve a ejecutarlo si reinicias el PC o WSL.
 # =============================================================================
@@ -43,10 +48,15 @@ Write-Host ""
 Write-Host "=================================================================" -ForegroundColor Green
 if ($wifi) {
   Write-Host " En el navegador del Quest 2 abre:" -ForegroundColor Green
-  Write-Host "     https://${wifi}:$port/" -ForegroundColor Yellow
+  Write-Host "     http://${wifi}:$port/" -ForegroundColor Yellow
 } else {
-  Write-Host " Abre en el Quest:  https://<IP-Wi-Fi-de-este-PC>:$port/" -ForegroundColor Green
+  Write-Host " Abre en el Quest:  http://<IP-Wi-Fi-de-este-PC>:$port/" -ForegroundColor Green
 }
+Write-Host ""
+Write-Host " OJO: por IP (no localhost) el navegador NO da 'contexto seguro' con" -ForegroundColor Yellow
+Write-Host " HTTP, asi que la pagina carga pero NO aparece el boton ENTER VR." -ForegroundColor Yellow
+Write-Host " Para VR usa el modo USB (quest-vr-usb.ps1) o el despliegue HTTPS:" -ForegroundColor Yellow
+Write-Host "     https://quimcuant.netlify.app/" -ForegroundColor Yellow
 Write-Host "=================================================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Estado del portproxy:"

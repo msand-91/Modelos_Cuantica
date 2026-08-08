@@ -111,6 +111,52 @@ export function buildIsosurface(field, levelFraction, opacity = 0.85) {
   return group;
 }
 
+// PILA de isosuperficies: varias capas anidadas en progresion geometrica, con
+// el color y la opacidad graduados segun el valor. Una sola isosuperficie
+// convierte un campo continuo en una dicotomia (dentro/fuera, rojo/azul); con
+// varias capas se recupera la nocion de GRADIENTE sin renunciar a ver la forma.
+//
+// Los niveles crecen en potencias de 2 porque los campos de este programa
+// abarcan varios ordenes de magnitud (el laplaciano va de 1e-2 a 1e5): en
+// escala lineal las capas se amontonarian todas en el mismo sitio.
+export function buildIsosurfaceStack(field, levelFraction, opacity = 0.85, nLayers = 3) {
+  const group = new THREE.Group();
+  group.name = 'isosuperficies';
+  const base = levelFraction * field.absMax;
+
+  for (let k = 0; k < nLayers; k++) {
+    const lvl = base * Math.pow(2, k);
+    if (lvl >= field.absMax) break;
+    const t = nLayers > 1 ? k / (nLayers - 1) : 1;
+
+    // El gradiente se lleva en la OPACIDAD, no en desaturar el color. Aclarar
+    // las capas exteriores hacia el gris parecia buena idea, pero al
+    // superponerse varias translucidas —roja sobre azul— la mezcla se vuelve
+    // parda y se pierde el signo. Manteniendo el tono saturado y variando solo
+    // la transparencia, cada capa conserva su color y el degradado se lee.
+    const alpha = opacity * (0.10 + 0.45 * t * t);
+    const mezcla = (a, b) => a + (b - a) * t;
+    const rojo = [mezcla(1.00, 0.90), mezcla(0.45, 0.16), mezcla(0.50, 0.24)];
+    const azul = [mezcla(0.42, 0.13), mezcla(0.60, 0.34), mezcla(1.00, 0.95)];
+
+    const mat = (rgb) => new THREE.MeshStandardMaterial({
+      color: new THREE.Color(rgb[0], rgb[1], rgb[2]),
+      roughness: 0.45, metalness: 0,
+      transparent: true, opacity: Math.min(1, alpha),
+      depthWrite: t > 0.85,
+      // Solo la capa interna se dibuja por las dos caras: con DoubleSide cada
+      // cascara translucida se mezcla dos veces y el conjunto se emblanquece.
+      side: t > 0.85 ? THREE.DoubleSide : THREE.FrontSide,
+    });
+
+    const gp = marchingCubes(field, lvl);
+    if (gp.getAttribute('position').count > 0) group.add(new THREE.Mesh(gp, mat(rojo)));
+    const gn = marchingCubes(field, -lvl);
+    if (gn.getAttribute('position').count > 0) group.add(new THREE.Mesh(gn, mat(azul)));
+  }
+  return group;
+}
+
 // Isosuperficie de DENSIDAD |psi|^2 (siempre >= 0): una sola superficie de un
 // color (no hay signo). `field` debe ser el muestreo de |psi|^2.
 export function buildDensityIsosurface(field, levelFraction, opacity = 0.85, color = 0x49e0a0) {

@@ -50,7 +50,21 @@ canvas { display: block; }
   font-size: 13px;
   line-height: 1.5;
   backdrop-filter: blur(6px);
+  /* La tabla de orbitales puede ser larga (el benceno tiene 36): que el panel
+     se pueda recorrer en vez de salirse de la pantalla. */
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
+#titulo .t-guia {
+  margin-left: 10px;
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+#titulo .t-guia:hover { opacity: 0.8; }
+
 #info h3 { margin: 0 0 6px; font-size: 14px; color: var(--accent); }
 #info .val { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #ffd479; }
 #info .muted { opacity: 0.7; }
@@ -88,6 +102,62 @@ canvas { display: block; }
   pointer-events: none;
   white-space: nowrap;
 }
+
+/* Graficas del modulo de quimica cuantica (niveles OM y curvas) */
+/* Se apartan del panel de control (lil-gui), que ocupa todo el borde derecho:
+   ahí quedaban tapadas y parecía que la curva E(R) no se dibujaba. El margen
+   exacto lo fija main.js con el ancho real del panel; este es el valor de
+   respaldo. */
+#qccharts {
+  position: fixed;
+  right: 276px;              /* respaldo: main.js lo ajusta al ancho del panel */
+  bottom: 12px;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;       /* en fila: ocupan poco alto y no tapan la escena */
+  align-items: flex-end;
+  gap: 8px;
+  max-width: calc(100vw - 640px);
+  flex-wrap: wrap-reverse;   /* si no caben, la curva salta encima */
+  justify-content: flex-end;
+}
+#qccharts canvas {
+  background: var(--panel);
+  border: 1px solid rgba(90, 169, 255, 0.25);
+  border-radius: 8px;
+  display: block;
+}
+#qccharts .chart-wrap { position: relative; }
+#qccharts .chart-label {
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  font-size: 11px;
+  opacity: 0.85;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Tabla de puntos criticos / orbitales dentro del panel de informacion */
+#info table.qc {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 3px;
+}
+#info table.qc th {
+  text-align: left;
+  font-weight: 600;
+  opacity: 0.7;
+  padding: 1px 4px 1px 0;
+}
+#info table.qc td {
+  padding: 1px 4px 1px 0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+#info .busy { color: #ffd479; }
+#info .warn { color: #ff9d5a; }
+#info .ok { color: #49e0a0; }
 
 /* Boton VR generado por three.js */
 button#VRButton {

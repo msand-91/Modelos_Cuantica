@@ -5,3 +5,9 @@ dist/
 
 # Libro de estudio (con derechos, no se publica)
 *.pdf
+# ...pero la guia de la app si se publica
+!docs/guia.pdf
+
+# Datos intermedios de la guia: pesan mucho y se regeneran con
+#   node scripts/guia-datos.mjs
+docs/guia-datos.json

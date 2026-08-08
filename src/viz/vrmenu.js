@@ -14,7 +14,7 @@ export class VRMenu {
     this.actions = actions;
     this.getStatus = getStatus;
     this.W = 512;
-    this.H = 676;
+    this.H = 748;   // una fila más: HOMO / LUMO
     this.hover = null;
 
     // Botones (rectangulos en pixeles del canvas).
@@ -34,7 +34,11 @@ export class VRMenu {
       { id: 'recenter', label: 'Recentrar', x: 340, y: 504, w: 148, h: 62 },
       { id: 'cycleForm', label: 'Líneas', x: 24, y: 576, w: 230, h: 62, activeKey: 'lineas' },
       { id: 'cycleColor', label: 'Color', x: 258, y: 576, w: 230, h: 62 },
+      // Solo tienen sentido con una funcion de onda calculada (atomo/molecula).
+      { id: 'goHomo', label: 'HOMO', x: 24, y: 648, w: 230, h: 62, onlyQC: true },
+      { id: 'goLumo', label: 'LUMO', x: 258, y: 648, w: 230, h: 62, onlyQC: true },
     ];
+    this._qc = false;   // ultimo estado conocido: filtra los botones de arriba
 
     // Canvas + textura.
     this.canvas = document.createElement('canvas');
@@ -99,7 +103,8 @@ export class VRMenu {
     const px = hits[0].uv.x * this.W;
     const py = (1 - hits[0].uv.y) * this.H;
     const b = this.buttons.find(
-      (b) => px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h
+      (b) => (!b.onlyQC || this._qc)
+        && px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h
     );
     return this._setHover(b ? b.id : null);
   }
@@ -150,11 +155,13 @@ export class VRMenu {
     c.textAlign = 'center';
     c.fillStyle = '#9bb3d4';
     c.font = '22px sans-serif';
-    c.fillText('Orbital', W / 2, 212);
-    c.fillText('Especie', W / 2, 306);
+    c.fillText(s.qc ? (s.esAtomo ? 'Orbital atómico' : 'Orbital molecular') : 'Orbital', W / 2, 212);
+    c.fillText(s.qc ? (s.esAtomo ? 'Elemento' : 'Molécula') : 'Especie', W / 2, 306);
 
     // Botones.
+    this._qc = !!s.qc;
     for (const b of this.buttons) {
+      if (b.onlyQC && !this._qc) continue;
       const active = b.activeKey ? !!s[b.activeKey] : false;
       const hovered = this.hover === b.id;
       roundRect(c, b.x, b.y, b.w, b.h, 12);
